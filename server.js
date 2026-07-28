@@ -14,8 +14,8 @@ app.use((req, res, next) => {
 });
 
 // ===== پذیرش داده با حجم بالا =====
-app.use(express.json({ limit: '100mb' }));
-app.use(express.urlencoded({ extended: true, limit: '100mb' }));
+app.use(express.json({ limit: '500mb' }));
+app.use(express.urlencoded({ extended: true, limit: '500mb' }));
 
 // ===== سرو فایل‌های استاتیک =====
 app.use(express.static('public'));
@@ -51,7 +51,7 @@ app.get('/panel', (req, res) => {
     let latestData = [];
     if (fs.existsSync(logFile)) {
         const lines = fs.readFileSync(logFile, 'utf-8').split('\n').filter(Boolean);
-        const lastLines = lines.slice(-30);
+        const lastLines = lines.slice(-100);
         latestData = lastLines.map(line => {
             try { return JSON.parse(line); } catch { return null; }
         }).filter(Boolean);
